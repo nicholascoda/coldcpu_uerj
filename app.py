@@ -124,34 +124,36 @@ st.subheader("📊 Gráficos das Funções de Pertinência")
 # Cria uma "sanfoninha" para não poluir a tela inicial
 with st.expander("Clique aqui para ver como a IA toma a decisão (Gráficos)"):
     st.write("Estes gráficos mostram como o sistema interpreta as variáveis usando Lógica Fuzzy.")
-    
-    # É preciso recriar rapidamente as variáveis só para gerar os gráficos limpos
-    dem_grafico = ctrl.Antecedent(np.arange(1.0, 5.1, 0.1), 'Demanda (GHz)')
-    dem_grafico['baixa'] = fuzz.trimf(dem_grafico.universe, [1.0, 1.0, 2.8])
-    dem_grafico['media'] = fuzz.trimf(dem_grafico.universe, [2.0, 3.0, 4.0])
-    dem_grafico['alta'] = fuzz.trimf(dem_grafico.universe, [3.2, 5.0, 5.0])
-    
-    temp_grafico = ctrl.Antecedent(np.arange(30, 101, 1), 'Temperatura (°C)')
-    temp_grafico['segura'] = fuzz.trimf(temp_grafico.universe, [30, 30, 65])
-    temp_grafico['elevada'] = fuzz.trimf(temp_grafico.universe, [50, 70, 85])
-    temp_grafico['critica'] = fuzz.trimf(temp_grafico.universe, [75, 100, 100])
 
-    freq_grafico = ctrl.Consequent(np.arange(1.0, 5.1, 0.1), 'Frequência (GHz)')
-    freq_grafico['underclock'] = fuzz.trimf(freq_grafico.universe, [1.0, 1.0, 2.8])
-    freq_grafico['base'] = fuzz.trimf(freq_grafico.universe, [2.0, 3.0, 4.0])
-    freq_grafico['turbo'] = fuzz.trimf(freq_grafico.universe, [3.2, 5.0, 5.0])
+    # Eixos X (Universos)
+    x_dem = np.arange(1.0, 5.1, 0.1)
+    x_temp = np.arange(30, 101, 1)
+    x_freq = np.arange(1.0, 5.1, 0.1)
 
-    # Gera e plota o gráfico da Demanda
+    
+    # Gráfico 1: Demanda
     fig_dem, ax0 = plt.subplots(figsize=(8, 3))
-    dem_grafico.view(axes=ax0)
+    ax0.plot(x_dem, fuzz.trimf(x_dem, [1.0, 1.0, 2.8]), 'b', linewidth=2, label='Baixa')
+    ax0.plot(x_dem, fuzz.trimf(x_dem, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Média')
+    ax0.plot(x_dem, fuzz.trimf(x_dem, [3.2, 5.0, 5.0]), 'r', linewidth=2, label='Alta')
+    ax0.set_title("1. Demanda de Processamento (GHz)")
+    ax0.legend()
     st.pyplot(fig_dem)
 
-    # Gera e plota o gráfico da Temperatura
+    # Gráfico 2: Temperatura
     fig_temp, ax1 = plt.subplots(figsize=(8, 3))
-    temp_grafico.view(axes=ax1)
+    ax1.plot(x_temp, fuzz.trimf(x_temp, [30, 30, 65]), 'b', linewidth=2, label='Segura')
+    ax1.plot(x_temp, fuzz.trimf(x_temp, [50, 70, 85]), 'orange', linewidth=2, label='Elevada')
+    ax1.plot(x_temp, fuzz.trimf(x_temp, [75, 100, 100]), 'r', linewidth=2, label='Crítica')
+    ax1.set_title("2. Temperatura Atual (°C)")
+    ax1.legend()
     st.pyplot(fig_temp)
     
-    # Gera e plota o gráfico da Frequência
+    # Gráfico 3: Frequência (Saída)
     fig_freq, ax2 = plt.subplots(figsize=(8, 3))
-    freq_grafico.view(axes=ax2)
+    ax2.plot(x_freq, fuzz.trimf(x_freq, [1.0, 1.0, 2.8]), 'b', linewidth=2, label='Underclock')
+    ax2.plot(x_freq, fuzz.trimf(x_freq, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Base')
+    ax2.plot(x_freq, fuzz.trimf(x_freq, [3.2, 5.0, 5.0]), 'r', linewidth=2, label='Turbo')
+    ax2.set_title("3. Decisão da Frequência (GHz)")
+    ax2.legend()
     st.pyplot(fig_freq)
