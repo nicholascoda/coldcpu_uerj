@@ -6,11 +6,16 @@ from skfuzzy import control as ctrl
 # CONFIGURAÇÃO DA PÁGINA E FONTE
 st.set_page_config(page_title="Controle Fuzzy de CPU", layout="centered")
 
-# Mudar fonte para Arial
+# Truque de CSS corrigido para mudar a fonte para Arial sem quebrar os ícones
 st.markdown("""
     <style>
-    * {
-        font-family: 'Arial', sans-serif !important;
+    /* Aplica Arial em todo o texto */
+    html, body, p, h1, h2, h3, h4, h5, h6, li, div {
+        font-family: 'Arial', sans-serif;
+    }
+    /* Protege a fonte especial dos ícones do Streamlit */
+    .material-symbols-rounded, .material-icons {
+        font-family: 'Material Symbols Rounded' !important;
     }
     </style>
 """, unsafe_allow_html=True)
