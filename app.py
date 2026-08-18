@@ -43,14 +43,12 @@ st.divider()
 # ==========================================
 # 1. LÓGICA FUZZY
 # ==========================================
-@st.cache_resource # para o Streamlit carregar a lógica mais rápido
+@st.cache_resource
 def criar_sistema_fuzzy():
-    # Variáveis
     demanda = ctrl.Antecedent(np.arange(1.0, 5.1, 0.1), 'demanda')
     temperatura = ctrl.Antecedent(np.arange(30, 101, 1), 'temperatura')
     frequencia = ctrl.Consequent(np.arange(1.0, 5.1, 0.1), 'frequencia')
 
-    # Funções de Pertinência
     demanda['baixa'] = fuzz.trimf(demanda.universe, [1.0, 1.0, 2.8])
     demanda['media'] = fuzz.trimf(demanda.universe, [2.0, 3.0, 4.0])
     demanda['alta'] = fuzz.trimf(demanda.universe, [3.2, 5.0, 5.0])
@@ -63,7 +61,6 @@ def criar_sistema_fuzzy():
     frequencia['base'] = fuzz.trimf(frequencia.universe, [2.0, 3.0, 4.0])
     frequencia['turbo'] = fuzz.trimf(frequencia.universe, [3.2, 5.0, 5.0])
 
-    # Regras
     r1 = ctrl.Rule(demanda['baixa'], frequencia['underclock'])
     r2 = ctrl.Rule(demanda['media'] & temperatura['segura'], frequencia['base'])
     r3 = ctrl.Rule(demanda['alta'] & temperatura['segura'], frequencia['turbo'])
@@ -73,7 +70,6 @@ def criar_sistema_fuzzy():
     r7 = ctrl.Rule(demanda['media'] & temperatura['elevada'], frequencia['base'])
 
     sistema_controle = ctrl.ControlSystem([r1, r2, r3, r4, r5, r6, r7])
-    # Retornamos o sistema E a variável frequência para conseguirmos gerar o gráfico dinâmico!
     return sistema_controle, frequencia
 
 sistema_controle, var_frequencia = criar_sistema_fuzzy()
@@ -101,28 +97,13 @@ porcentagem_uso = int((resultado_ghz / 5.0) * 100)
 with col2:
     st.subheader("Saída Fuzzy (Decisão)")
     st.metric(label="Frequência Aplicada à CPU", value=f"{resultado_ghz:.2f} GHz")
-    
     st.write("Capacidade de Clock:")
     st.progress(porcentagem_uso / 100.0)
 
 st.divider()
 
 # ==========================================
-# 4. GRÁFICO DINÂMICO ("A TESOURA" EM TEMPO REAL)
-# ==========================================
-st.subheader("📊 Visualização da Defuzzificação (Em Tempo Real)")
-st.write("A área sombreada em azul mostra os trapézios cortados pelas regras ativadas. A **linha preta grossa** indica o exato **Centro de Área** (ponto de equilíbrio) calculado.")
-
-# Gera o gráfico dinâmico com base nos sliders atuais
-fig_resultado, ax_resultado = plt.subplots(figsize=(8, 3))
-var_frequencia.view(sim=simulador, axes=ax_resultado)
-ax_resultado.set_title("") # Esconde o título em inglês da biblioteca
-st.pyplot(fig_resultado)
-
-st.divider()
-
-# ==========================================
-# 5. DIAGNÓSTICO INTERATIVO
+# 4. DIAGNÓSTICO INTERATIVO (Agora vem antes!)
 # ==========================================
 st.subheader("Análise do Sistema")
 
@@ -136,6 +117,26 @@ elif in_demanda < 2.0:
     st.info("💤 **Modo Ocioso:** Sistema com baixa demanda. Reduzindo o clock para economizar energia e manter a máquina fria.")
 else:
     st.info("⚖️ **Operação Normal:** O sistema encontrou um equilíbrio ideal entre a tarefa atual e o aquecimento da máquina.")
+
+st.divider()
+
+# ==========================================
+# 5. GRÁFICO DINÂMICO ("A TESOURA" CORRIGIDA)
+# ==========================================
+st.subheader("📊 Visualização da Defuzzificação (Em Tempo Real)")
+st.write("A área preenchida mostra os trapézios cortados pelas regras ativadas. A **linha preta grossa** indica o exato **Centro de Área** (ponto de equilíbrio) calculado.")
+
+# CORREÇÃO: Manda o scikit-fuzzy desenhar livremente
+var_frequencia.view(sim=simulador)
+
+# Captura a figura que ele acabou de desenhar
+fig_resultado = plt.gcf()
+fig_resultado.set_size_inches(8, 3) # Ajusta o tamanho para ficar bonito no site
+plt.title("") # Remove o título padrão em inglês
+
+# Mostra no Streamlit e depois limpa da memória
+st.pyplot(fig_resultado)
+plt.close(fig_resultado)
 
 # ==========================================
 # 6. VISUALIZAÇÃO DOS GRÁFICOS ESTÁTICOS
@@ -158,6 +159,7 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax0.set_title("1. Demanda de Processamento (GHz)")
     ax0.legend()
     st.pyplot(fig_dem)
+    plt.close(fig_dem) # Proteção extra
 
     # Gráfico 2: Temperatura
     fig_temp, ax1 = plt.subplots(figsize=(8, 3))
@@ -167,6 +169,7 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax1.set_title("2. Temperatura Atual (°C)")
     ax1.legend()
     st.pyplot(fig_temp)
+    plt.close(fig_temp) # Proteção extra
     
     # Gráfico 3: Frequência
     fig_freq, ax2 = plt.subplots(figsize=(8, 3))
@@ -176,3 +179,4 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax2.set_title("3. Decisão da Frequência (GHz)")
     ax2.legend()
     st.pyplot(fig_freq)
+    plt.close(fig_freq) # Proteção extra
