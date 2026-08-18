@@ -22,14 +22,15 @@ st.markdown("""
 
 # BARRA LATERAL (Identificação do Trabalho)
 with st.sidebar:
+
+    st.write("**Disciplina:** Inteligência Computacional 2")
+    st.write("**Professor:** Thiago Dabouit")
+    st.write("**Instituição:** UERJ")
+    st.divider()
     st.header("👨‍💻 Equipe do Projeto")
     st.write("- Nicholas Coda")
     st.write("- Luiz Gustavo Guayacuruz")
     st.write("- Matheus Corrêa")
-    st.divider()
-    st.write("**Disciplina:** Inteligência Computacional 2")
-    st.write("**Professor:** Thiago Dabouit")
-    st.write("**Instituição:** UERJ")
 
 # CABEÇALHO PRINCIPAL
 st.title("⚙️ Sistema Especialista Fuzzy")
