@@ -49,17 +49,18 @@ def criar_sistema_fuzzy():
     temperatura = ctrl.Antecedent(np.arange(30, 101, 1), 'temperatura')
     frequencia = ctrl.Consequent(np.arange(1.0, 5.1, 0.1), 'frequencia')
 
-    demanda['baixa'] = fuzz.trimf(demanda.universe, [1.0, 1.0, 2.8])
+    # Funções de Pertinência (com as bordas esticadas para evitar o bug do float)
+    demanda['baixa'] = fuzz.trimf(demanda.universe, [0.0, 1.0, 2.8])
     demanda['media'] = fuzz.trimf(demanda.universe, [2.0, 3.0, 4.0])
-    demanda['alta'] = fuzz.trimf(demanda.universe, [3.2, 5.0, 5.0])
+    demanda['alta'] = fuzz.trimf(demanda.universe, [3.2, 5.0, 6.0])
 
-    temperatura['segura'] = fuzz.trimf(temperatura.universe, [30, 30, 65])
+    temperatura['segura'] = fuzz.trimf(temperatura.universe, [0, 30, 65])
     temperatura['elevada'] = fuzz.trimf(temperatura.universe, [50, 70, 85])
-    temperatura['critica'] = fuzz.trimf(temperatura.universe, [75, 100, 100])
+    temperatura['critica'] = fuzz.trimf(temperatura.universe, [75, 100, 110])
 
-    frequencia['underclock'] = fuzz.trimf(frequencia.universe, [1.0, 1.0, 2.8])
+    frequencia['underclock'] = fuzz.trimf(frequencia.universe, [0.0, 1.0, 2.8])
     frequencia['base'] = fuzz.trimf(frequencia.universe, [2.0, 3.0, 4.0])
-    frequencia['turbo'] = fuzz.trimf(frequencia.universe, [3.2, 5.0, 5.0])
+    frequencia['turbo'] = fuzz.trimf(frequencia.universe, [3.2, 5.0, 6.0])
 
     r1 = ctrl.Rule(demanda['baixa'], frequencia['underclock'])
     r2 = ctrl.Rule(demanda['media'] & temperatura['segura'], frequencia['base'])
