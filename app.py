@@ -43,6 +43,7 @@ def criar_sistema_fuzzy():
     r4 = ctrl.Rule(demanda['alta'] & temperatura['elevada'], frequencia['base'])
     r5 = ctrl.Rule(demanda['alta'] & temperatura['critica'], frequencia['underclock'])
     r6 = ctrl.Rule(demanda['media'] & temperatura['critica'], frequencia['underclock'])
+    r7 = ctrl.Rule(demanda['media'] & temperatura['elevada'], frequencia['base'])
 
     sistema_controle = ctrl.ControlSystem([r1, r2, r3, r4, r5, r6])
     return ctrl.ControlSystemSimulation(sistema_controle)
