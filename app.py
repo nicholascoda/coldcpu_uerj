@@ -3,20 +3,37 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
-# ==========================================
-# CONFIGURAÇÃO DA PÁGINA
-# ==========================================
-st.set_page_config(page_title="Controle Fuzzy de CPU", page_icon="⚙️", layout="centered")
+# CONFIGURAÇÃO DA PÁGINA E FONTE
+st.set_page_config(page_title="Controle Fuzzy de CPU", layout="centered")
 
+# Mudar fonte para Arial
+st.markdown("""
+    <style>
+    * {
+        font-family: 'Arial', sans-serif !important;
+    }
+    </style>
+""", unsafe_allow_html=True)
+
+# BARRA LATERAL (Identificação do Trabalho)
+with st.sidebar:
+    st.header("👨‍💻 Equipe do Projeto")
+    st.write("- Nicholas Coda")
+    st.write("- Luiz Gustavo Guayacuruz")
+    st.write("- Matheus Corrêa")
+    st.divider()
+    st.write("**Disciplina:** Inteligência Computacional 2")
+    st.write("**Professor:** Thiago Dabouit")
+    st.write("**Instituição:** UERJ")
+
+# CABEÇALHO PRINCIPAL
 st.title("⚙️ Sistema Especialista Fuzzy")
 st.markdown("**Domínio:** Ajuste Dinâmico de Frequência da CPU (Thermal Throttling)")
 st.write("Mova as barras abaixo para simular a demanda do usuário e a temperatura atual do processador.")
 st.divider()
 
-# ==========================================
 # 1. LÓGICA FUZZY
-# ==========================================
-@st.cache_resource # Isso faz o Streamlit carregar a lógica mais rápido
+@st.cache_resource # para o Streamlit carregar a lógica mais rápido
 def criar_sistema_fuzzy():
     # Variáveis
     demanda = ctrl.Antecedent(np.arange(1.0, 5.1, 0.1), 'demanda')
@@ -45,14 +62,12 @@ def criar_sistema_fuzzy():
     r6 = ctrl.Rule(demanda['media'] & temperatura['critica'], frequencia['underclock'])
     r7 = ctrl.Rule(demanda['media'] & temperatura['elevada'], frequencia['base'])
 
-    sistema_controle = ctrl.ControlSystem([r1, r2, r3, r4, r5, r6])
+    sistema_controle = ctrl.ControlSystem([r1, r2, r3, r4, r5, r6, r7])
     return ctrl.ControlSystemSimulation(sistema_controle)
 
 simulador = criar_sistema_fuzzy()
 
-# ==========================================
 # 2. INTERFACE DO USUÁRIO (Sliders)
-# ==========================================
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
@@ -60,9 +75,8 @@ with col1:
     in_demanda = st.slider("Demanda de Processamento (GHz)", min_value=1.0, max_value=5.0, value=3.0, step=0.1)
     in_temp = st.slider("Temperatura (°C)", min_value=30, max_value=100, value=50, step=1)
 
-# ==========================================
+
 # 3. PROCESSAMENTO FUZZY E RESULTADOS
-# ==========================================
 # Passando valores para o simulador
 simulador.input['demanda'] = in_demanda
 simulador.input['temperatura'] = in_temp
@@ -72,7 +86,6 @@ porcentagem_uso = int((resultado_ghz / 5.0) * 100)
 
 with col2:
     st.subheader("Saída Fuzzy (Decisão)")
-    # Um card bonito mostrando a frequência calculada
     st.metric(label="Frequência Aplicada à CPU", value=f"{resultado_ghz:.2f} GHz")
     
     # Barra de progresso visual
@@ -81,13 +94,11 @@ with col2:
 
 st.divider()
 
-# ==========================================
 # 4. DIAGNÓSTICO INTERATIVO
-# ==========================================
 st.subheader("Análise do Sistema")
 
 if in_temp >= 85:
-    st.error("🥵 **ALERTA CRÍTICO:** Risco de dano físico! Aplicando *Thermal Throttling* severo (Underclock) para forçar o resfriamento imediato da CPU, ignorando a demanda do usuário.")
+    st.error("🔥 **ALERTA CRÍTICO:** Risco de dano físico! Aplicando *Thermal Throttling* severo (Underclock) para forçar o resfriamento imediato da CPU, ignorando a demanda do usuário.")
 elif in_temp >= 70 and in_demanda > 3.5:
     st.warning("⚠️ **Gargalo Térmico Moderado:** O usuário quer desempenho, mas a temperatura está subindo. Segurando a frequência na base para não superaquecer.")
 elif in_demanda >= 4.0 and in_temp < 65:
