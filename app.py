@@ -2,6 +2,7 @@ import streamlit as st
 import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
+import matplotlib.pyplot as plt
 
 # CONFIGURAÇÃO DA PÁGINA E FONTE
 st.set_page_config(page_title="Controle Fuzzy de CPU", layout="centered")
@@ -113,3 +114,44 @@ elif in_demanda < 2.0:
     st.info("💤 **Modo Ocioso:** Sistema com baixa demanda. Reduzindo o clock para economizar energia e manter a máquina fria.")
 else:
     st.info("⚖️ **Operação Normal:** O sistema encontrou um equilíbrio ideal entre a tarefa atual e o aquecimento da máquina.")
+
+
+# 5. VISUALIZAÇÃO DOS GRÁFICOS (Gráficos Fuzzy)
+
+st.divider()
+st.subheader("📊 Gráficos das Funções de Pertinência")
+
+# Cria uma "sanfoninha" para não poluir a tela inicial
+with st.expander("Clique aqui para ver como a IA toma a decisão (Gráficos)"):
+    st.write("Estes gráficos mostram como o sistema interpreta as variáveis usando Lógica Fuzzy.")
+    
+    # É preciso recriar rapidamente as variáveis só para gerar os gráficos limpos
+    dem_grafico = ctrl.Antecedent(np.arange(1.0, 5.1, 0.1), 'Demanda (GHz)')
+    dem_grafico['baixa'] = fuzz.trimf(dem_grafico.universe, [1.0, 1.0, 2.8])
+    dem_grafico['media'] = fuzz.trimf(dem_grafico.universe, [2.0, 3.0, 4.0])
+    dem_grafico['alta'] = fuzz.trimf(dem_grafico.universe, [3.2, 5.0, 5.0])
+    
+    temp_grafico = ctrl.Antecedent(np.arange(30, 101, 1), 'Temperatura (°C)')
+    temp_grafico['segura'] = fuzz.trimf(temp_grafico.universe, [30, 30, 65])
+    temp_grafico['elevada'] = fuzz.trimf(temp_grafico.universe, [50, 70, 85])
+    temp_grafico['critica'] = fuzz.trimf(temp_grafico.universe, [75, 100, 100])
+
+    freq_grafico = ctrl.Consequent(np.arange(1.0, 5.1, 0.1), 'Frequência (GHz)')
+    freq_grafico['underclock'] = fuzz.trimf(freq_grafico.universe, [1.0, 1.0, 2.8])
+    freq_grafico['base'] = fuzz.trimf(freq_grafico.universe, [2.0, 3.0, 4.0])
+    freq_grafico['turbo'] = fuzz.trimf(freq_grafico.universe, [3.2, 5.0, 5.0])
+
+    # Gera e plota o gráfico da Demanda
+    fig_dem, ax0 = plt.subplots(figsize=(8, 3))
+    dem_grafico.view(axes=ax0)
+    st.pyplot(fig_dem)
+
+    # Gera e plota o gráfico da Temperatura
+    fig_temp, ax1 = plt.subplots(figsize=(8, 3))
+    temp_grafico.view(axes=ax1)
+    st.pyplot(fig_temp)
+    
+    # Gera e plota o gráfico da Frequência
+    fig_freq, ax2 = plt.subplots(figsize=(8, 3))
+    freq_grafico.view(axes=ax2)
+    st.pyplot(fig_freq)
