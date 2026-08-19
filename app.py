@@ -130,10 +130,10 @@ plt.close(fig_resultado)
 
 # 6. VISUALIZAÇÃO DOS GRÁFICOS ESTÁTICOS
 st.divider()
-st.subheader("📚 Dicionário Fuzzy (Funções de Pertinência)")
+st.subheader("📚 Dicionário Fuzzy (Fuzzificação)")
 
 with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
-    st.write("Estes gráficos mostram como o sistema interpreta os limites das variáveis.")
+    st.write("Estes gráficos mostram como o sistema interpreta os limites das variáveis. A **linha preta tracejada** mostra exatamente onde os valores dos seus sliders estão batendo!")
 
     x_dem = np.arange(1.0, 5.1, 0.1)
     x_temp = np.arange(30, 101, 1)
@@ -144,6 +144,10 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax0.plot(x_dem, fuzz.trimf(x_dem, [0.0, 1.0, 2.8]), 'b', linewidth=2, label='Baixa')
     ax0.plot(x_dem, fuzz.trimf(x_dem, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Média')
     ax0.plot(x_dem, fuzz.trimf(x_dem, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Alta')
+    
+    # MÁGICA AQUI: Linha preta vertical acompanhando o slider da Demanda
+    ax0.axvline(x=in_demanda, color='black', linestyle='--', linewidth=2, label=f'Entrada: {in_demanda:.1f}')
+    
     ax0.set_title("1. Demanda de Processamento (GHz)")
     ax0.set_ylabel("Grau de Pertinência")
     ax0.legend()
@@ -155,6 +159,10 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax1.plot(x_temp, fuzz.trimf(x_temp, [0, 30, 65]), 'b', linewidth=2, label='Segura')
     ax1.plot(x_temp, fuzz.trimf(x_temp, [50, 70, 85]), 'orange', linewidth=2, label='Elevada')
     ax1.plot(x_temp, fuzz.trimf(x_temp, [75, 100, 110]), 'r', linewidth=2, label='Crítica')
+    
+    # MÁGICA AQUI: Linha preta vertical acompanhando o slider da Temperatura
+    ax1.axvline(x=in_temp, color='black', linestyle='--', linewidth=2, label=f'Entrada: {in_temp}')
+    
     ax1.set_title("2. Temperatura Atual (°C)")
     ax1.set_ylabel("Grau de Pertinência")
     ax1.legend()
