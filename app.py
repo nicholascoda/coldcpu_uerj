@@ -7,7 +7,6 @@ import matplotlib.pyplot as plt
 # CONFIGURAÇÃO DA PÁGINA E FONTE
 st.set_page_config(page_title="Controle Fuzzy de CPU", layout="centered")
 
-# Truque de CSS corrigido para mudar a fonte para Arial sem quebrar os ícones
 st.markdown("""
     <style>
     /* Aplica Arial em todo o texto */
@@ -21,17 +20,18 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-# BARRA LATERAL (Identificação do Trabalho)
+# BARRA LATERAL
 with st.sidebar:
-
-    st.write("**Disciplina:** Inteligência Computacional 2")
+    st.write("**Disciplina:** Inteligência Computacional II")
     st.write("**Professor:** Thiago Dabouit")
     st.write("**Instituição:** UERJ")
     st.divider()
     st.header("👨‍💻 Equipe do Projeto")
     st.write("- Nicholas Coda")
-    st.write("- Luiz Gustavo Guayacuruz")
     st.write("- Matheus Corrêa")
+    st.write("- Luiz Gustavo Guaycuruz")
+   
+
 
 # CABEÇALHO PRINCIPAL
 st.title("⚙️ Sistema Especialista Fuzzy")
@@ -40,16 +40,13 @@ st.write("Mova as barras abaixo para simular a demanda do usuário e a temperatu
 st.divider()
 
 
-# ==========================================
 # 1. LÓGICA FUZZY
-# ==========================================
 @st.cache_resource
 def criar_sistema_fuzzy():
     demanda = ctrl.Antecedent(np.arange(1.0, 5.1, 0.1), 'demanda')
     temperatura = ctrl.Antecedent(np.arange(30, 101, 1), 'temperatura')
     frequencia = ctrl.Consequent(np.arange(1.0, 5.1, 0.1), 'frequencia')
 
-    # Funções de Pertinência (com as bordas esticadas para evitar o bug do float)
     demanda['baixa'] = fuzz.trimf(demanda.universe, [0.0, 1.0, 2.8])
     demanda['media'] = fuzz.trimf(demanda.universe, [2.0, 3.0, 4.0])
     demanda['alta'] = fuzz.trimf(demanda.universe, [3.2, 5.0, 6.0])
@@ -76,9 +73,7 @@ def criar_sistema_fuzzy():
 sistema_controle, var_frequencia = criar_sistema_fuzzy()
 simulador = ctrl.ControlSystemSimulation(sistema_controle)
 
-# ==========================================
-# 2. INTERFACE DO USUÁRIO (Sliders)
-# ==========================================
+# 2. INTERFACE DO USUÁRIO
 col1, col2 = st.columns(2, gap="large")
 
 with col1:
@@ -86,9 +81,7 @@ with col1:
     in_demanda = st.slider("Demanda de Processamento (GHz)", min_value=1.0, max_value=5.0, value=3.0, step=0.1)
     in_temp = st.slider("Temperatura (°C)", min_value=30, max_value=100, value=50, step=1)
 
-# ==========================================
 # 3. PROCESSAMENTO FUZZY E RESULTADOS
-# ==========================================
 simulador.input['demanda'] = in_demanda
 simulador.input['temperatura'] = in_temp
 simulador.compute()
@@ -103,9 +96,7 @@ with col2:
 
 st.divider()
 
-# ==========================================
-# 4. DIAGNÓSTICO INTERATIVO (Agora vem antes!)
-# ==========================================
+# 4. DIAGNÓSTICO INTERATIVO
 st.subheader("Análise do Sistema")
 
 if in_temp >= 85:
@@ -121,27 +112,23 @@ else:
 
 st.divider()
 
-# ==========================================
-# 5. GRÁFICO DINÂMICO ("A TESOURA" CORRIGIDA)
-# ==========================================
-st.subheader("📊 Visualização da Defuzzificação (Em Tempo Real)")
+# 5. GRÁFICO DINÂMICO
+st.subheader("📊 Visualização da Defuzzificação")
 st.write("A área preenchida mostra os trapézios cortados pelas regras ativadas. A **linha preta grossa** indica o exato **Centro de Área** (ponto de equilíbrio) calculado.")
 
-# CORREÇÃO: Manda o scikit-fuzzy desenhar livremente
 var_frequencia.view(sim=simulador)
 
-# Captura a figura que ele acabou de desenhar
 fig_resultado = plt.gcf()
-fig_resultado.set_size_inches(8, 3) # Ajusta o tamanho para ficar bonito no site
-plt.title("") # Remove o título padrão em inglês
+ax_resultado = plt.gca()
+ax_resultado.set_ylabel("Grau de Pertinência")
+ax_resultado.set_xlabel("Frequência da CPU (GHz)")
+fig_resultado.set_size_inches(8, 3) 
+plt.title("") 
 
-# Mostra no Streamlit e depois limpa da memória
 st.pyplot(fig_resultado)
 plt.close(fig_resultado)
 
-# ==========================================
 # 6. VISUALIZAÇÃO DOS GRÁFICOS ESTÁTICOS
-# ==========================================
 st.divider()
 st.subheader("📚 Dicionário Fuzzy (Funções de Pertinência)")
 
@@ -158,6 +145,7 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax0.plot(x_dem, fuzz.trimf(x_dem, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Média')
     ax0.plot(x_dem, fuzz.trimf(x_dem, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Alta')
     ax0.set_title("1. Demanda de Processamento (GHz)")
+    ax0.set_ylabel("Grau de Pertinência")
     ax0.legend()
     st.pyplot(fig_dem)
     plt.close(fig_dem)
@@ -168,6 +156,7 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax1.plot(x_temp, fuzz.trimf(x_temp, [50, 70, 85]), 'orange', linewidth=2, label='Elevada')
     ax1.plot(x_temp, fuzz.trimf(x_temp, [75, 100, 110]), 'r', linewidth=2, label='Crítica')
     ax1.set_title("2. Temperatura Atual (°C)")
+    ax1.set_ylabel("Grau de Pertinência")
     ax1.legend()
     st.pyplot(fig_temp)
     plt.close(fig_temp)
@@ -178,6 +167,7 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     ax2.plot(x_freq, fuzz.trimf(x_freq, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Base')
     ax2.plot(x_freq, fuzz.trimf(x_freq, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Turbo')
     ax2.set_title("3. Decisão da Frequência (GHz)")
+    ax2.set_ylabel("Grau de Pertinência")
     ax2.legend()
     st.pyplot(fig_freq)
     plt.close(fig_freq)
