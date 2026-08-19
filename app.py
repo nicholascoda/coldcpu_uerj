@@ -154,30 +154,30 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     
     # Gráfico 1: Demanda
     fig_dem, ax0 = plt.subplots(figsize=(8, 3))
-    ax0.plot(x_dem, fuzz.trimf(x_dem, [1.0, 1.0, 2.8]), 'b', linewidth=2, label='Baixa')
+    ax0.plot(x_dem, fuzz.trimf(x_dem, [0.0, 1.0, 2.8]), 'b', linewidth=2, label='Baixa')
     ax0.plot(x_dem, fuzz.trimf(x_dem, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Média')
-    ax0.plot(x_dem, fuzz.trimf(x_dem, [3.2, 5.0, 5.0]), 'r', linewidth=2, label='Alta')
+    ax0.plot(x_dem, fuzz.trimf(x_dem, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Alta')
     ax0.set_title("1. Demanda de Processamento (GHz)")
     ax0.legend()
     st.pyplot(fig_dem)
-    plt.close(fig_dem) # Proteção extra
+    plt.close(fig_dem)
 
     # Gráfico 2: Temperatura
     fig_temp, ax1 = plt.subplots(figsize=(8, 3))
-    ax1.plot(x_temp, fuzz.trimf(x_temp, [30, 30, 65]), 'b', linewidth=2, label='Segura')
+    ax1.plot(x_temp, fuzz.trimf(x_temp, [0, 30, 65]), 'b', linewidth=2, label='Segura')
     ax1.plot(x_temp, fuzz.trimf(x_temp, [50, 70, 85]), 'orange', linewidth=2, label='Elevada')
-    ax1.plot(x_temp, fuzz.trimf(x_temp, [75, 100, 100]), 'r', linewidth=2, label='Crítica')
+    ax1.plot(x_temp, fuzz.trimf(x_temp, [75, 100, 110]), 'r', linewidth=2, label='Crítica')
     ax1.set_title("2. Temperatura Atual (°C)")
     ax1.legend()
     st.pyplot(fig_temp)
-    plt.close(fig_temp) # Proteção extra
+    plt.close(fig_temp)
     
     # Gráfico 3: Frequência
     fig_freq, ax2 = plt.subplots(figsize=(8, 3))
-    ax2.plot(x_freq, fuzz.trimf(x_freq, [1.0, 1.0, 2.8]), 'b', linewidth=2, label='Underclock')
+    ax2.plot(x_freq, fuzz.trimf(x_freq, [0.0, 1.0, 2.8]), 'b', linewidth=2, label='Underclock')
     ax2.plot(x_freq, fuzz.trimf(x_freq, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Base')
-    ax2.plot(x_freq, fuzz.trimf(x_freq, [3.2, 5.0, 5.0]), 'r', linewidth=2, label='Turbo')
+    ax2.plot(x_freq, fuzz.trimf(x_freq, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Turbo')
     ax2.set_title("3. Decisão da Frequência (GHz)")
     ax2.legend()
     st.pyplot(fig_freq)
-    plt.close(fig_freq) # Proteção extra
+    plt.close(fig_freq)
