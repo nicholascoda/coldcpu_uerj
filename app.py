@@ -114,7 +114,7 @@ st.divider()
 
 # 5. GRÁFICO DINÂMICO
 st.subheader("📊 Visualização da Defuzzificação")
-st.write("A área preenchida mostra os trapézios cortados pelas regras ativadas. A **linha preta grossa** indica o exato **Centro de Área** (ponto de equilíbrio) calculado.")
+st.write("A área preenchida mostra os trapézios cortados pelas regras ativadas. A **linha preta grossa** indica o exato Centroid (ponto de equilíbrio) calculado.")
 
 var_frequencia.view(sim=simulador)
 
