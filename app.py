@@ -161,13 +161,3 @@ with st.expander("Clique aqui para ver as regras do jogo (Gráficos Base)"):
     st.pyplot(fig_temp)
     plt.close(fig_temp)
     
-    # Gráfico 3: Frequência
-    fig_freq, ax2 = plt.subplots(figsize=(8, 3))
-    ax2.plot(x_freq, fuzz.trimf(x_freq, [0.0, 1.0, 2.8]), 'b', linewidth=2, label='Underclock')
-    ax2.plot(x_freq, fuzz.trimf(x_freq, [2.0, 3.0, 4.0]), 'g', linewidth=2, label='Base')
-    ax2.plot(x_freq, fuzz.trimf(x_freq, [3.2, 5.0, 6.0]), 'r', linewidth=2, label='Turbo')
-    ax2.set_title("3. Decisão da Frequência (GHz)")
-    ax2.set_ylabel("Grau de Pertinência")
-    ax2.legend()
-    st.pyplot(fig_freq)
-    plt.close(fig_freq)
